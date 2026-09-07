@@ -1,0 +1,34 @@
+<Solution>
+  <Folder Name="/src/" />
+  <Folder Name="/src/BuildingBlocks/">
+    <Project Path="src/BuildingBlocks/HolyTac.SharedKernel/HolyTac.SharedKernel.csproj" />
+  </Folder>
+  <Folder Name="/src/Gateway/">
+    <Project Path="src/Gateway/HolyTac.Gateway/HolyTac.Gateway.csproj" />
+  </Folder>
+  <Folder Name="/src/Services/" />
+  <Folder Name="/src/Services/Menu/">
+    <Project Path="src/Services/Menu/HolyTac.Menu.Api/HolyTac.Menu.Api.csproj" />
+    <Project Path="src/Services/Menu/HolyTac.Menu.Application/HolyTac.Menu.Application.csproj" />
+    <Project Path="src/Services/Menu/HolyTac.Menu.Domain/HolyTac.Menu.Domain.csproj" />
+    <Project Path="src/Services/Menu/HolyTac.Menu.Infrastructure/HolyTac.Menu.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/src/Services/Orders/">
+    <Project Path="src/Services/Orders/HolyTac.Orders.Api/HolyTac.Orders.Api.csproj" />
+    <Project Path="src/Services/Orders/HolyTac.Orders.Application/HolyTac.Orders.Application.csproj" />
+    <Project Path="src/Services/Orders/HolyTac.Orders.Domain/HolyTac.Orders.Domain.csproj" />
+    <Project Path="src/Services/Orders/HolyTac.Orders.Infrastructure/HolyTac.Orders.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/src/Services/Promotions/">
+    <Project Path="src/Services/Promotions/HolyTac.Promotions.Api/HolyTac.Promotions.Api.csproj" />
+    <Project Path="src/Services/Promotions/HolyTac.Promotions.Application/HolyTac.Promotions.Application.csproj" />
+    <Project Path="src/Services/Promotions/HolyTac.Promotions.Domain/HolyTac.Promotions.Domain.csproj" />
+    <Project Path="src/Services/Promotions/HolyTac.Promotions.Infrastructure/HolyTac.Promotions.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/src/Services/Reservations/">
+    <Project Path="src/Services/Reservations/HolyTac.Reservations.Api/HolyTac.Reservations.Api.csproj" />
+    <Project Path="src/Services/Reservations/HolyTac.Reservations.Application/HolyTac.Reservations.Application.csproj" />
+    <Project Path="src/Services/Reservations/HolyTac.Reservations.Domain/HolyTac.Reservations.Domain.csproj" />
+    <Project Path="src/Services/Reservations/HolyTac.Reservations.Infrastructure/HolyTac.Reservations.Infrastructure.csproj" />
+  </Folder>
+</Solution>

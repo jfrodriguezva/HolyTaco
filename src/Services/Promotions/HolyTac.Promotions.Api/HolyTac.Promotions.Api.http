@@ -1,0 +1,6 @@
+@HolyTac.Promotions.Api_HostAddress = http://localhost:5223
+
+GET {{HolyTac.Promotions.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

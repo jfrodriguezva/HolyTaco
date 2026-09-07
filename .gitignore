@@ -1,0 +1,13 @@
+# .NET
+bin/
+obj/
+*.user
+
+# Node / Next.js
+frontend/holytac-web/node_modules/
+frontend/holytac-web/.next/
+frontend/holytac-web/.env.local
+
+# IDE
+.vs/
+.vscode/

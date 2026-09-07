@@ -1,0 +1,48 @@
+@import "tailwindcss";
+
+:root {
+  /* Paleta "Terracota Taquería" — tacos + bar elegante */
+  --color-terracota: #c1502e;
+  --color-terracota-dark: #96371d;
+  --color-terracota-light: #e08a5f;
+  --color-chile: #e8792a;
+  --color-agave: #33473b;
+  --color-agave-dark: #23322a;
+  --color-agave-light: #4f6657;
+  --color-cream: #f7eee0;
+  --color-cream-dark: #ecd9be;
+  --color-ink: #241a12;
+  --color-ink-soft: #4a3b2c;
+
+  --background: var(--color-cream);
+  --foreground: var(--color-ink);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-terracota: var(--color-terracota);
+  --color-terracota-dark: var(--color-terracota-dark);
+  --color-terracota-light: var(--color-terracota-light);
+  --color-chile: var(--color-chile);
+  --color-agave: var(--color-agave);
+  --color-agave-dark: var(--color-agave-dark);
+  --color-agave-light: var(--color-agave-light);
+  --color-cream: var(--color-cream);
+  --color-cream-dark: var(--color-cream-dark);
+  --color-ink: var(--color-ink);
+  --color-ink-soft: var(--color-ink-soft);
+  --font-display: var(--font-fraunces);
+  --font-sans: var(--font-work-sans);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+}
+
+.bg-noise {
+  background-image: radial-gradient(circle at 1px 1px, rgba(36, 26, 18, 0.06) 1px, transparent 0);
+  background-size: 18px 18px;
+}
