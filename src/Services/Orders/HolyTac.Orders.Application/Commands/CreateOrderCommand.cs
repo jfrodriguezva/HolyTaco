@@ -14,9 +14,15 @@ public class CreateOrderCommandHandler(IOrderRepository orderRepository, IMenuCa
     {
         var order = Order.Create(request.TableNumber, request.CustomerName);
 
-        foreach (var line in request.Items)
+        // Se validan todas las líneas contra Menu en paralelo (en vez de una petición HTTP a la
+        // vez) para no pagar N round-trips secuenciales en pedidos con varios productos.
+        var menuItems = await Task.WhenAll(
+            request.Items.Select(line => menuCatalogClient.GetItemAsync(line.MenuItemId, cancellationToken)));
+
+        for (var i = 0; i < request.Items.Count; i++)
         {
-            var menuItem = await menuCatalogClient.GetItemAsync(line.MenuItemId, cancellationToken)
+            var line = request.Items[i];
+            var menuItem = menuItems[i]
                 ?? throw new InvalidOperationException($"El producto {line.MenuItemId} no existe en el menú.");
 
             if (!menuItem.IsAvailable)

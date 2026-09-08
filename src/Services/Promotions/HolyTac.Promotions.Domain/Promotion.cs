@@ -44,7 +44,9 @@ public class Promotion : Entity<Guid>
         {
             case DiscountType.ComboPrice when comboPrice is null or <= 0:
                 throw new ArgumentException("Una promoción de combo requiere un precio de combo mayor a cero.", nameof(comboPrice));
-            case DiscountType.Percentage or DiscountType.FixedAmount when discountValue is null or <= 0:
+            case DiscountType.Percentage when discountValue is null or <= 0 or > 100:
+                throw new ArgumentException("El porcentaje de descuento debe ser mayor a 0 y menor o igual a 100.", nameof(discountValue));
+            case DiscountType.FixedAmount when discountValue is null or <= 0:
                 throw new ArgumentException("El valor del descuento debe ser mayor a cero.", nameof(discountValue));
         }
 

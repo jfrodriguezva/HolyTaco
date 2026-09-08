@@ -5,14 +5,9 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("DefaultCors", policy => policy
-        .AllowAnyOrigin()
-        .AllowAnyMethod()
-        .AllowAnyHeader());
-});
 
+// Sin CORS aquí a propósito: el navegador solo le habla al Gateway (donde sí se configura),
+// nunca directo a este microservicio.
 builder.Services.AddReservationsApplication();
 builder.Services.AddReservationsInfrastructure(builder.Configuration);
 
@@ -23,8 +18,6 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
-app.UseCors("DefaultCors");
-app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();
 

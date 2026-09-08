@@ -29,7 +29,14 @@ public class MenuController(ISender sender) : ControllerBase
     [HttpPost]
     public async Task<ActionResult<Guid>> Create(CreateMenuItemCommand command, CancellationToken cancellationToken)
     {
-        var id = await sender.Send(command, cancellationToken);
-        return CreatedAtAction(nameof(GetById), new { id }, id);
+        try
+        {
+            var id = await sender.Send(command, cancellationToken);
+            return CreatedAtAction(nameof(GetById), new { id }, id);
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
     }
 }
