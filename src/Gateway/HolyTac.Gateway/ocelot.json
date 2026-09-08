@@ -4,116 +4,173 @@
   },
   "Routes": [
     {
-      "UpstreamPathTemplate": "/api/menu/{everything}",
-      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ],
-      "DownstreamPathTemplate": "/api/menu/{everything}",
+      "UpstreamPathTemplate": "/api/menu",
+      "UpstreamHttpMethod": [ "GET" ],
+      "DownstreamPathTemplate": "/api/menu",
       "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [
-        { "Host": "localhost", "Port": 5101 }
-      ],
-      "QoSOptions": {
-        "ExceptionsAllowedBeforeBreaking": 5,
-        "DurationOfBreak": 15000,
-        "TimeoutValue": 5000
-      }
+      "DownstreamHostAndPorts": [ { "Host": "localhost", "Port": 5101 } ],
+      "QoSOptions": { "ExceptionsAllowedBeforeBreaking": 5, "DurationOfBreak": 15000, "TimeoutValue": 5000 }
+    },
+    {
+      "UpstreamPathTemplate": "/api/menu/{id}",
+      "UpstreamHttpMethod": [ "GET" ],
+      "DownstreamPathTemplate": "/api/menu/{id}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [ { "Host": "localhost", "Port": 5101 } ],
+      "QoSOptions": { "ExceptionsAllowedBeforeBreaking": 5, "DurationOfBreak": 15000, "TimeoutValue": 5000 }
     },
     {
       "UpstreamPathTemplate": "/api/menu",
-      "UpstreamHttpMethod": [ "GET", "POST" ],
+      "UpstreamHttpMethod": [ "POST" ],
       "DownstreamPathTemplate": "/api/menu",
       "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [
-        { "Host": "localhost", "Port": 5101 }
-      ],
-      "QoSOptions": {
-        "ExceptionsAllowedBeforeBreaking": 5,
-        "DurationOfBreak": 15000,
-        "TimeoutValue": 5000
-      }
+      "DownstreamHostAndPorts": [ { "Host": "localhost", "Port": 5101 } ],
+      "QoSOptions": { "ExceptionsAllowedBeforeBreaking": 5, "DurationOfBreak": 15000, "TimeoutValue": 5000 },
+      "AuthenticationOptions": { "AuthenticationProviderKey": "StaffAuth", "AllowedScopes": [] },
+      "RouteClaimsRequirement": { "role": "Gerente" }
     },
+
     {
-      "UpstreamPathTemplate": "/api/orders/{everything}",
-      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ],
-      "DownstreamPathTemplate": "/api/orders/{everything}",
+      "UpstreamPathTemplate": "/api/orders",
+      "UpstreamHttpMethod": [ "GET" ],
+      "DownstreamPathTemplate": "/api/orders",
       "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [
-        { "Host": "localhost", "Port": 5102 }
-      ],
-      "QoSOptions": {
-        "ExceptionsAllowedBeforeBreaking": 5,
-        "DurationOfBreak": 15000,
-        "TimeoutValue": 5000
-      }
+      "DownstreamHostAndPorts": [ { "Host": "localhost", "Port": 5102 } ],
+      "QoSOptions": { "ExceptionsAllowedBeforeBreaking": 5, "DurationOfBreak": 15000, "TimeoutValue": 5000 }
     },
     {
       "UpstreamPathTemplate": "/api/orders",
-      "UpstreamHttpMethod": [ "GET", "POST" ],
+      "UpstreamHttpMethod": [ "POST" ],
       "DownstreamPathTemplate": "/api/orders",
       "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [
-        { "Host": "localhost", "Port": 5102 }
-      ],
-      "QoSOptions": {
-        "ExceptionsAllowedBeforeBreaking": 5,
-        "DurationOfBreak": 15000,
-        "TimeoutValue": 5000
-      }
+      "DownstreamHostAndPorts": [ { "Host": "localhost", "Port": 5102 } ],
+      "QoSOptions": { "ExceptionsAllowedBeforeBreaking": 5, "DurationOfBreak": 15000, "TimeoutValue": 5000 }
     },
     {
-      "UpstreamPathTemplate": "/api/reservations/{everything}",
-      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ],
-      "DownstreamPathTemplate": "/api/reservations/{everything}",
+      "UpstreamPathTemplate": "/api/orders/{id}",
+      "UpstreamHttpMethod": [ "GET" ],
+      "DownstreamPathTemplate": "/api/orders/{id}",
       "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [
-        { "Host": "localhost", "Port": 5103 }
-      ],
-      "QoSOptions": {
-        "ExceptionsAllowedBeforeBreaking": 5,
-        "DurationOfBreak": 15000,
-        "TimeoutValue": 5000
-      }
+      "DownstreamHostAndPorts": [ { "Host": "localhost", "Port": 5102 } ],
+      "QoSOptions": { "ExceptionsAllowedBeforeBreaking": 5, "DurationOfBreak": 15000, "TimeoutValue": 5000 }
+    },
+    {
+      "UpstreamPathTemplate": "/api/orders/{id}/advance",
+      "UpstreamHttpMethod": [ "POST" ],
+      "DownstreamPathTemplate": "/api/orders/{id}/advance",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [ { "Host": "localhost", "Port": 5102 } ],
+      "QoSOptions": { "ExceptionsAllowedBeforeBreaking": 5, "DurationOfBreak": 15000, "TimeoutValue": 5000 },
+      "AuthenticationOptions": { "AuthenticationProviderKey": "StaffAuth", "AllowedScopes": [] }
+    },
+    {
+      "UpstreamPathTemplate": "/api/orders/{id}/cancel",
+      "UpstreamHttpMethod": [ "POST" ],
+      "DownstreamPathTemplate": "/api/orders/{id}/cancel",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [ { "Host": "localhost", "Port": 5102 } ],
+      "QoSOptions": { "ExceptionsAllowedBeforeBreaking": 5, "DurationOfBreak": 15000, "TimeoutValue": 5000 },
+      "AuthenticationOptions": { "AuthenticationProviderKey": "StaffAuth", "AllowedScopes": [] }
+    },
+
+    {
+      "UpstreamPathTemplate": "/api/reservations/availability",
+      "UpstreamHttpMethod": [ "GET" ],
+      "DownstreamPathTemplate": "/api/reservations/availability",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [ { "Host": "localhost", "Port": 5103 } ],
+      "Priority": 1,
+      "QoSOptions": { "ExceptionsAllowedBeforeBreaking": 5, "DurationOfBreak": 15000, "TimeoutValue": 5000 }
     },
     {
       "UpstreamPathTemplate": "/api/reservations",
-      "UpstreamHttpMethod": [ "GET", "POST" ],
+      "UpstreamHttpMethod": [ "GET" ],
       "DownstreamPathTemplate": "/api/reservations",
       "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [
-        { "Host": "localhost", "Port": 5103 }
-      ],
-      "QoSOptions": {
-        "ExceptionsAllowedBeforeBreaking": 5,
-        "DurationOfBreak": 15000,
-        "TimeoutValue": 5000
-      }
+      "DownstreamHostAndPorts": [ { "Host": "localhost", "Port": 5103 } ],
+      "QoSOptions": { "ExceptionsAllowedBeforeBreaking": 5, "DurationOfBreak": 15000, "TimeoutValue": 5000 }
     },
     {
-      "UpstreamPathTemplate": "/api/promotions/{everything}",
-      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ],
-      "DownstreamPathTemplate": "/api/promotions/{everything}",
+      "UpstreamPathTemplate": "/api/reservations",
+      "UpstreamHttpMethod": [ "POST" ],
+      "DownstreamPathTemplate": "/api/reservations",
       "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [
-        { "Host": "localhost", "Port": 5104 }
-      ],
-      "QoSOptions": {
-        "ExceptionsAllowedBeforeBreaking": 5,
-        "DurationOfBreak": 15000,
-        "TimeoutValue": 5000
-      }
+      "DownstreamHostAndPorts": [ { "Host": "localhost", "Port": 5103 } ],
+      "QoSOptions": { "ExceptionsAllowedBeforeBreaking": 5, "DurationOfBreak": 15000, "TimeoutValue": 5000 }
+    },
+    {
+      "UpstreamPathTemplate": "/api/reservations/{id}",
+      "UpstreamHttpMethod": [ "GET" ],
+      "DownstreamPathTemplate": "/api/reservations/{id}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [ { "Host": "localhost", "Port": 5103 } ],
+      "Priority": 0,
+      "QoSOptions": { "ExceptionsAllowedBeforeBreaking": 5, "DurationOfBreak": 15000, "TimeoutValue": 5000 }
+    },
+    {
+      "UpstreamPathTemplate": "/api/reservations/{id}/confirm",
+      "UpstreamHttpMethod": [ "POST" ],
+      "DownstreamPathTemplate": "/api/reservations/{id}/confirm",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [ { "Host": "localhost", "Port": 5103 } ],
+      "QoSOptions": { "ExceptionsAllowedBeforeBreaking": 5, "DurationOfBreak": 15000, "TimeoutValue": 5000 },
+      "AuthenticationOptions": { "AuthenticationProviderKey": "StaffAuth", "AllowedScopes": [] }
+    },
+    {
+      "UpstreamPathTemplate": "/api/reservations/{id}/cancel",
+      "UpstreamHttpMethod": [ "POST" ],
+      "DownstreamPathTemplate": "/api/reservations/{id}/cancel",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [ { "Host": "localhost", "Port": 5103 } ],
+      "QoSOptions": { "ExceptionsAllowedBeforeBreaking": 5, "DurationOfBreak": 15000, "TimeoutValue": 5000 },
+      "AuthenticationOptions": { "AuthenticationProviderKey": "StaffAuth", "AllowedScopes": [] }
+    },
+
+    {
+      "UpstreamPathTemplate": "/api/promotions/featured",
+      "UpstreamHttpMethod": [ "GET" ],
+      "DownstreamPathTemplate": "/api/promotions/featured",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [ { "Host": "localhost", "Port": 5104 } ],
+      "Priority": 1,
+      "QoSOptions": { "ExceptionsAllowedBeforeBreaking": 5, "DurationOfBreak": 15000, "TimeoutValue": 5000 }
     },
     {
       "UpstreamPathTemplate": "/api/promotions",
-      "UpstreamHttpMethod": [ "GET", "POST" ],
+      "UpstreamHttpMethod": [ "GET" ],
       "DownstreamPathTemplate": "/api/promotions",
       "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [
-        { "Host": "localhost", "Port": 5104 }
-      ],
-      "QoSOptions": {
-        "ExceptionsAllowedBeforeBreaking": 5,
-        "DurationOfBreak": 15000,
-        "TimeoutValue": 5000
-      }
+      "DownstreamHostAndPorts": [ { "Host": "localhost", "Port": 5104 } ],
+      "QoSOptions": { "ExceptionsAllowedBeforeBreaking": 5, "DurationOfBreak": 15000, "TimeoutValue": 5000 }
+    },
+    {
+      "UpstreamPathTemplate": "/api/promotions",
+      "UpstreamHttpMethod": [ "POST" ],
+      "DownstreamPathTemplate": "/api/promotions",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [ { "Host": "localhost", "Port": 5104 } ],
+      "QoSOptions": { "ExceptionsAllowedBeforeBreaking": 5, "DurationOfBreak": 15000, "TimeoutValue": 5000 },
+      "AuthenticationOptions": { "AuthenticationProviderKey": "StaffAuth", "AllowedScopes": [] },
+      "RouteClaimsRequirement": { "role": "Gerente" }
+    },
+    {
+      "UpstreamPathTemplate": "/api/promotions/{id}",
+      "UpstreamHttpMethod": [ "GET" ],
+      "DownstreamPathTemplate": "/api/promotions/{id}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [ { "Host": "localhost", "Port": 5104 } ],
+      "Priority": 0,
+      "QoSOptions": { "ExceptionsAllowedBeforeBreaking": 5, "DurationOfBreak": 15000, "TimeoutValue": 5000 }
+    },
+    {
+      "UpstreamPathTemplate": "/api/promotions/{id}/deactivate",
+      "UpstreamHttpMethod": [ "POST" ],
+      "DownstreamPathTemplate": "/api/promotions/{id}/deactivate",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [ { "Host": "localhost", "Port": 5104 } ],
+      "QoSOptions": { "ExceptionsAllowedBeforeBreaking": 5, "DurationOfBreak": 15000, "TimeoutValue": 5000 },
+      "AuthenticationOptions": { "AuthenticationProviderKey": "StaffAuth", "AllowedScopes": [] },
+      "RouteClaimsRequirement": { "role": "Gerente" }
     }
   ]
 }

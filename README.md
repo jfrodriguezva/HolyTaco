@@ -28,6 +28,23 @@ Next.js (frontend/holytac-web)
 
 `Orders` no accede a la base de datos de `Menu`: valida cada producto llamando al microservicio de Menú vía HTTP (bounded contexts independientes).
 
+## Autenticación de staff
+
+El Gateway emite y valida JWT (`POST /api/auth/login`) para las acciones de staff — confirmar/cancelar
+reservaciones, crear/desactivar promociones, dar de alta platillos. Las lecturas (menú, promociones,
+disponibilidad) y la creación de pedidos/reservaciones por parte del cliente siguen siendo públicas.
+
+Cuentas demo (configuradas en `appsettings.json` del Gateway, solo para desarrollo):
+
+| Usuario    | Password       | Rol      | Puede |
+|------------|----------------|----------|-------|
+| `mesero1`  | `Mesero123!`   | Mesero   | Confirmar/cancelar reservaciones, avanzar/cancelar pedidos |
+| `cocina1`  | `Cocina123!`   | Cocina   | Avanzar/cancelar pedidos |
+| `gerente1` | `Gerente123!`  | Gerente  | Todo lo anterior + crear/desactivar promociones, dar de alta platillos |
+
+El login está limitado a 5 intentos/minuto (protección básica contra fuerza bruta), y el Gateway
+solo acepta CORS desde los orígenes listados en `Cors:AllowedOrigins` (por defecto `:3000` y `:3001`).
+
 ## Requisitos
 
 - .NET SDK 10
@@ -88,7 +105,7 @@ Abre `http://localhost:3000`.
 
 ```
 src/
-  BuildingBlocks/HolyTac.SharedKernel      # Entity, Result, IDbConnectionFactory
+  BuildingBlocks/HolyTac.SharedKernel      # Entity, IDbConnectionFactory
   Services/
     Menu/    HolyTac.Menu.{Domain,Application,Infrastructure,Api}
     Orders/  HolyTac.Orders.{Domain,Application,Infrastructure,Api}
@@ -99,7 +116,6 @@ frontend/holytac-web/                      # Next.js (App Router) + Tailwind v4
 
 ## Próximos pasos sugeridos
 
-- Autenticación de meseros/administradores (JWT) en el Gateway.
 - Panel de cocina/barra en tiempo real (SignalR) para el avance de estatus de pedidos.
 - CRUD completo de menú (editar/deshabilitar platillos) desde un panel admin.
 - Tests unitarios de los handlers de MediatR y de las entidades de dominio.

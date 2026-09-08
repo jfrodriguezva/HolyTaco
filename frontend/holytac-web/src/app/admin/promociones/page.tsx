@@ -3,8 +3,11 @@
 import { useEffect, useState, useCallback } from "react";
 import { menuApi, promotionsApi, type DiscountType, type MenuItemDto, type PromotionDto } from "@/lib/api";
 import { addDaysIso, todayIso } from "@/lib/datetime";
+import { useAuth } from "@/lib/auth-context";
+import { RequireStaffAuth } from "@/components/require-staff-auth";
 
-export default function AdminPromocionesPage() {
+function AdminPromocionesContent() {
+  const { session } = useAuth();
   const [promotions, setPromotions] = useState<PromotionDto[]>([]);
   const [menuItems, setMenuItems] = useState<MenuItemDto[]>([]);
   const [loading, setLoading] = useState(true);
@@ -40,9 +43,10 @@ export default function AdminPromocionesPage() {
   }, [load]);
 
   const handleDeactivate = async (id: string) => {
+    if (!session) return;
     setActioningId(id);
     try {
-      await promotionsApi.deactivate(id);
+      await promotionsApi.deactivate(id, session.token);
       load();
     } catch {
       setError("No pudimos desactivar la promoción.");
@@ -52,6 +56,7 @@ export default function AdminPromocionesPage() {
   };
 
   const handleCreate = async () => {
+    if (!session) return;
     setFormError(null);
     if (!title.trim()) {
       setFormError("El título es obligatorio.");
@@ -60,17 +65,20 @@ export default function AdminPromocionesPage() {
 
     setSubmitting(true);
     try {
-      await promotionsApi.create({
-        title,
-        description,
-        discountType,
-        discountValue: discountType === "ComboPrice" ? null : Number(discountValue),
-        comboPrice: discountType === "ComboPrice" ? Number(comboPrice) : null,
-        menuItemIds: selectedItems,
-        startsAtUtc: `${startsAt}T00:00:00Z`,
-        endsAtUtc: `${endsAt}T23:59:59Z`,
-        isFeatured,
-      });
+      await promotionsApi.create(
+        {
+          title,
+          description,
+          discountType,
+          discountValue: discountType === "ComboPrice" ? null : Number(discountValue),
+          comboPrice: discountType === "ComboPrice" ? Number(comboPrice) : null,
+          menuItemIds: selectedItems,
+          startsAtUtc: `${startsAt}T00:00:00Z`,
+          endsAtUtc: `${endsAt}T23:59:59Z`,
+          isFeatured,
+        },
+        session.token
+      );
       setTitle("");
       setDescription("");
       setSelectedItems([]);
@@ -241,5 +249,13 @@ export default function AdminPromocionesPage() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function AdminPromocionesPage() {
+  return (
+    <RequireStaffAuth requiredRole="Gerente">
+      <AdminPromocionesContent />
+    </RequireStaffAuth>
   );
 }

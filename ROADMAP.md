@@ -9,15 +9,18 @@ herramienta completa para operar el restaurante.
 
 - Microservicios `Promotions` y `Reservations` (Clean Architecture, Dapper, Polly — mismo patrón que Menu/Orders).
 - Cliente: páginas públicas `/promociones` y `/reservar`, home reorientado a marketing + booking.
-- Staff: `/admin/promociones` y `/admin/reservaciones` **sin autenticación** (ver Fase 2).
-- Reservaciones con mesas reales, disponibilidad por horario y asignación automática sin traslapes.
+- Staff: `/admin/promociones` y `/admin/reservaciones`, protegidas por login (ver Fase 2 — completada).
+- Reservaciones con mesas reales, disponibilidad por horario y asignación automática sin traslapes (con lock transaccional para evitar dobles reservas concurrentes).
 - Promociones informativas (no se conectan aún al cálculo del carrito de Orders — ver Fase 3).
 
-## Fase 2 — Seguridad
+## Fase 2 — Seguridad ✅ completada
 
-- Autenticación (JWT) para todo `/admin/**` y para las mutaciones (`POST`/`PUT`/`DELETE`) de cada microservicio, verificada en el Gateway.
-- Roles: mesero, cocina/barra, gerente — cada uno ve solo lo que le corresponde.
-- Rate limiting y CORS restringido a dominios conocidos (hoy `AllowAnyOrigin` es solo para desarrollo).
+- Autenticación JWT emitida y validada en el Gateway (`POST /api/auth/login`), aplicada a las mutaciones de staff de cada microservicio vía `AuthenticationOptions` de Ocelot.
+- Roles `Mesero`, `Cocina` y `Gerente`: cualquier staff autenticado puede confirmar/cancelar reservaciones y avanzar/cancelar pedidos; crear/desactivar promociones y dar de alta platillos requiere `Gerente` (`RouteClaimsRequirement` por ruta).
+- `/admin/reservaciones` y `/admin/promociones` exigen sesión de staff en el frontend (`RequireStaffAuth`), con redirección a `/login`.
+- Rate limiting (`Microsoft.AspNetCore.RateLimiting`): límite global de 120 req/10s por IP en el Gateway, más 5 intentos/min específicamente sobre `/api/auth/login`.
+- CORS restringido a una lista de orígenes conocidos (`Cors:AllowedOrigins` en `appsettings.json`), ya no `AllowAnyOrigin`; y solo configurado en el Gateway (los microservicios ya no lo necesitan, nunca los toca un navegador directamente).
+- Pendiente real de esta fase: hoy las cuentas de staff viven hardcodeadas en `appsettings.json` del Gateway (sin alta/baja de usuarios ni hash gestionado en base de datos) — suficiente para operar un solo restaurante, pero el primer paso obligado si esto crece a multi-sucursal o rotación de personal frecuente.
 
 ## Fase 3 — Comandas evolucionadas
 

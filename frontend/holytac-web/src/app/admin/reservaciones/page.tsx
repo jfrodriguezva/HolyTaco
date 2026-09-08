@@ -3,6 +3,8 @@
 import { useEffect, useState, useCallback } from "react";
 import { reservationsApi, type ReservationDto } from "@/lib/api";
 import { formatTime, todayIso } from "@/lib/datetime";
+import { useAuth } from "@/lib/auth-context";
+import { RequireStaffAuth } from "@/components/require-staff-auth";
 
 const statusStyles: Record<string, string> = {
   Pendiente: "bg-chile/15 text-chile",
@@ -11,7 +13,8 @@ const statusStyles: Record<string, string> = {
   Completada: "bg-ink-soft/15 text-ink-soft",
 };
 
-export default function AdminReservacionesPage() {
+function AdminReservacionesContent() {
+  const { session } = useAuth();
   const [date, setDate] = useState(todayIso());
   const [reservations, setReservations] = useState<ReservationDto[]>([]);
   const [loading, setLoading] = useState(true);
@@ -33,9 +36,10 @@ export default function AdminReservacionesPage() {
   }, [load]);
 
   const handleConfirm = async (id: string) => {
+    if (!session) return;
     setActioningId(id);
     try {
-      await reservationsApi.confirm(id);
+      await reservationsApi.confirm(id, session.token);
       load();
     } catch {
       setError("No pudimos confirmar la reservación.");
@@ -45,9 +49,10 @@ export default function AdminReservacionesPage() {
   };
 
   const handleCancel = async (id: string) => {
+    if (!session) return;
     setActioningId(id);
     try {
-      await reservationsApi.cancel(id);
+      await reservationsApi.cancel(id, session.token);
       load();
     } catch {
       setError("No pudimos cancelar la reservación.");
@@ -143,5 +148,13 @@ export default function AdminReservacionesPage() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function AdminReservacionesPage() {
+  return (
+    <RequireStaffAuth>
+      <AdminReservacionesContent />
+    </RequireStaffAuth>
   );
 }

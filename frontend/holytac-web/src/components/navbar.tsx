@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useCart } from "@/lib/cart-context";
+import { useAuth } from "@/lib/auth-context";
 
 const links = [
   { href: "/", label: "Inicio" },
@@ -14,6 +15,7 @@ const links = [
 export function Navbar() {
   const pathname = usePathname();
   const { itemCount } = useCart();
+  const { session, logout } = useAuth();
 
   return (
     <header className="sticky top-0 z-40 border-b border-agave/15 bg-cream/90 backdrop-blur">
@@ -55,6 +57,23 @@ export function Navbar() {
               </span>
             )}
           </Link>
+
+          {session ? (
+            <button
+              onClick={logout}
+              title={`${session.username} (${session.role})`}
+              className="hidden text-xs font-semibold uppercase tracking-wide text-ink-soft hover:text-terracota sm:inline-block"
+            >
+              Salir ({session.role})
+            </button>
+          ) : (
+            <Link
+              href="/login"
+              className="hidden text-xs font-semibold uppercase tracking-wide text-ink-soft hover:text-terracota sm:inline-block"
+            >
+              Staff
+            </Link>
+          )}
         </div>
       </div>
     </header>

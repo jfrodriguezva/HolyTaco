@@ -106,6 +106,24 @@ export interface CreateReservationRequest {
   notes?: string | null;
 }
 
+export type StaffRole = "Mesero" | "Cocina" | "Gerente";
+
+export interface LoginRequest {
+  username: string;
+  password: string;
+}
+
+export interface LoginResponse {
+  token: string;
+  username: string;
+  role: StaffRole;
+  expiresAtUtc: string;
+}
+
+function authHeader(token?: string): Record<string, string> {
+  return token ? { Authorization: `Bearer ${token}` } : {};
+}
+
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:5100";
 
 async function apiFetch<T>(path: string, init?: RequestInit): Promise<T> {
@@ -137,6 +155,14 @@ async function apiFetch<T>(path: string, init?: RequestInit): Promise<T> {
   return (await response.json()) as T;
 }
 
+export const authApi = {
+  login: (request: LoginRequest) =>
+    apiFetch<LoginResponse>("/api/auth/login", {
+      method: "POST",
+      body: JSON.stringify(request),
+    }),
+};
+
 export const menuApi = {
   getAll: () => apiFetch<MenuItemDto[]>("/api/menu"),
   getByCategory: (category: MenuCategory) =>
@@ -157,13 +183,14 @@ export const promotionsApi = {
   getActive: () => apiFetch<PromotionDto[]>("/api/promotions?onlyActive=true"),
   getFeatured: () => apiFetch<PromotionDto[]>("/api/promotions/featured"),
   getAll: () => apiFetch<PromotionDto[]>("/api/promotions"),
-  create: (request: CreatePromotionRequest) =>
+  create: (request: CreatePromotionRequest, token: string) =>
     apiFetch<string>("/api/promotions", {
       method: "POST",
+      headers: authHeader(token),
       body: JSON.stringify(request),
     }),
-  deactivate: (id: string) =>
-    apiFetch<void>(`/api/promotions/${id}/deactivate`, { method: "POST" }),
+  deactivate: (id: string, token: string) =>
+    apiFetch<void>(`/api/promotions/${id}/deactivate`, { method: "POST", headers: authHeader(token) }),
 };
 
 export const reservationsApi = {
@@ -176,6 +203,8 @@ export const reservationsApi = {
     }),
   getByDate: (date: string) => apiFetch<ReservationDto[]>(`/api/reservations?date=${date}`),
   getById: (id: string) => apiFetch<ReservationDto>(`/api/reservations/${id}`),
-  confirm: (id: string) => apiFetch<void>(`/api/reservations/${id}/confirm`, { method: "POST" }),
-  cancel: (id: string) => apiFetch<void>(`/api/reservations/${id}/cancel`, { method: "POST" }),
+  confirm: (id: string, token: string) =>
+    apiFetch<void>(`/api/reservations/${id}/confirm`, { method: "POST", headers: authHeader(token) }),
+  cancel: (id: string, token: string) =>
+    apiFetch<void>(`/api/reservations/${id}/cancel`, { method: "POST", headers: authHeader(token) }),
 };

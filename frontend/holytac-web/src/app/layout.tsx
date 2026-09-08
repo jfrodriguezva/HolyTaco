@@ -3,6 +3,7 @@ import { Fraunces, Work_Sans } from "next/font/google";
 import "./globals.css";
 import { Navbar } from "@/components/navbar";
 import { CartProvider } from "@/lib/cart-context";
+import { AuthProvider } from "@/lib/auth-context";
 
 const fraunces = Fraunces({
   variable: "--font-fraunces",
@@ -29,10 +30,12 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${fraunces.variable} ${workSans.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-cream text-ink">
-        <CartProvider>
-          <Navbar />
-          <main className="flex-1">{children}</main>
-        </CartProvider>
+        <AuthProvider>
+          <CartProvider>
+            <Navbar />
+            <main className="flex-1">{children}</main>
+          </CartProvider>
+        </AuthProvider>
       </body>
     </html>
   );
