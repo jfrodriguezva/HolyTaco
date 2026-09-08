@@ -2,25 +2,14 @@ using HolyTac.Reservations.Domain;
 
 namespace HolyTac.Reservations.Application;
 
-/// <summary>Calcula qué mesa (si alguna) está libre para un horario y tamaño de grupo dados.</summary>
+/// <summary>
+/// Calcula horarios disponibles para mostrarlos al cliente. Es solo informativo: la disponibilidad
+/// real y definitiva se re-verifica de forma atómica en <see cref="IReservationRepository.CreateAsync"/>
+/// al momento de crear la reservación, para evitar condiciones de carrera entre esta consulta y el envío
+/// del formulario.
+/// </summary>
 public class AvailabilityService(ITableRepository tableRepository, IReservationRepository reservationRepository)
 {
-    public async Task<Table?> FindAvailableTableAsync(
-        DateTime reservationAtUtc, int partySize, CancellationToken cancellationToken = default)
-    {
-        var date = DateOnly.FromDateTime(reservationAtUtc);
-        var tables = await tableRepository.GetAllAsync(cancellationToken);
-        var reservationsThatDay = await reservationRepository.GetByDateAsync(date, cancellationToken);
-        var activeReservations = reservationsThatDay.Where(r => r.IsActive).ToList();
-
-        return tables
-            .Where(t => t.Capacity >= partySize)
-            .OrderBy(t => t.Capacity)
-            .FirstOrDefault(t => activeReservations
-                .Where(r => r.TableNumber == t.Number)
-                .All(r => !r.OverlapsWith(reservationAtUtc)));
-    }
-
     public async Task<IReadOnlyList<TimeSpan>> GetAvailableSlotsAsync(
         DateOnly date, int partySize, CancellationToken cancellationToken = default)
     {

@@ -2,11 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { reservationsApi, type ReservationDto } from "@/lib/api";
-import { formatLongDate, formatTime } from "@/lib/datetime";
-
-function todayIso(): string {
-  return new Date().toISOString().slice(0, 10);
-}
+import { formatLongDate, formatTime, todayIso } from "@/lib/datetime";
 
 export default function ReservarPage() {
   const [date, setDate] = useState(todayIso());

@@ -2,11 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { reservationsApi, type ReservationDto } from "@/lib/api";
-import { formatTime } from "@/lib/datetime";
-
-function todayIso(): string {
-  return new Date().toISOString().slice(0, 10);
-}
+import { formatTime, todayIso } from "@/lib/datetime";
 
 const statusStyles: Record<string, string> = {
   Pendiente: "bg-chile/15 text-chile",

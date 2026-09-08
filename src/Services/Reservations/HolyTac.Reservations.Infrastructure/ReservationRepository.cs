@@ -42,11 +42,66 @@ public class ReservationRepository(IDbConnectionFactory connectionFactory) : IRe
         }, cancellationToken);
     }
 
-    public async Task AddAsync(Reservation reservation, CancellationToken cancellationToken = default)
+    public async Task<Reservation> CreateAsync(
+        string customerName,
+        string phone,
+        string? email,
+        int partySize,
+        DateTime reservationAtUtc,
+        string? notes,
+        CancellationToken cancellationToken = default)
     {
-        await ResiliencePolicies.DatabasePipeline.ExecuteAsync(async _ =>
+        return await ResiliencePolicies.DatabasePipeline.ExecuteAsync(async _ =>
         {
             using var connection = connectionFactory.CreateConnection();
+            connection.Open();
+            using var transaction = connection.BeginTransaction();
+
+            // Serializa la creación de reservaciones para este día: mientras esta transacción no
+            // termine, cualquier otra petición para la misma fecha espera aquí antes de leer
+            // disponibilidad, evitando que dos reservaciones concurrentes elijan la misma mesa.
+            var lockKey = $"HolyTac:Reservations:{DateOnly.FromDateTime(reservationAtUtc):yyyyMMdd}";
+            await connection.ExecuteAsync(
+                """
+                DECLARE @lockResult INT;
+                EXEC @lockResult = sp_getapplock @Resource = @LockKey, @LockMode = 'Exclusive',
+                    @LockOwner = 'Transaction', @LockTimeout = 10000;
+                IF @lockResult < 0
+                    THROW 51000, 'No se pudo bloquear el horario de reservación; intenta de nuevo.', 1;
+                """,
+                new { LockKey = lockKey },
+                transaction);
+
+            var start = DateOnly.FromDateTime(reservationAtUtc).ToDateTime(TimeOnly.MinValue, DateTimeKind.Utc);
+            var end = start.AddDays(1);
+
+            var candidateTables = await connection.QueryAsync<TableRow>(
+                "SELECT Id, Number, Capacity, Zone FROM Tables WHERE Capacity >= @PartySize ORDER BY Capacity, Number",
+                new { PartySize = partySize },
+                transaction);
+
+            var activeReservationsThatDay = (await connection.QueryAsync<ReservationRow>(
+                """
+                SELECT Id, CustomerName, Phone, Email, PartySize, ReservationAtUtc, TableNumber, Status, Notes, CreatedAtUtc
+                FROM Reservations
+                WHERE ReservationAtUtc >= @Start AND ReservationAtUtc < @End AND Status IN (1, 2)
+                """,
+                new { Start = start, End = end },
+                transaction))
+                .Select(r => r.ToDomain())
+                .ToList();
+
+            var table = candidateTables
+                .Select(t => t.ToDomain())
+                .FirstOrDefault(t => activeReservationsThatDay
+                    .Where(r => r.TableNumber == t.Number)
+                    .All(r => !r.OverlapsWith(reservationAtUtc)));
+
+            if (table is null)
+                throw new InvalidOperationException("No hay mesas disponibles para ese horario y tamaño de grupo.");
+
+            var reservation = Reservation.Create(customerName, phone, email, partySize, reservationAtUtc, table.Number, notes);
+
             await connection.ExecuteAsync(
                 """
                 INSERT INTO Reservations
@@ -66,7 +121,11 @@ public class ReservationRepository(IDbConnectionFactory connectionFactory) : IRe
                     Status = (int)reservation.Status,
                     reservation.Notes,
                     reservation.CreatedAtUtc
-                });
+                },
+                transaction);
+
+            transaction.Commit();
+            return reservation;
         }, cancellationToken);
     }
 

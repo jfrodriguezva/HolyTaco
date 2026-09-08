@@ -1,4 +1,3 @@
-using HolyTac.Reservations.Domain;
 using MediatR;
 
 namespace HolyTac.Reservations.Application.Commands;
@@ -11,26 +10,20 @@ public record CreateReservationCommand(
     DateTime ReservationAtUtc,
     string? Notes) : IRequest<Guid>;
 
-public class CreateReservationCommandHandler(
-    AvailabilityService availabilityService,
-    IReservationRepository reservationRepository) : IRequestHandler<CreateReservationCommand, Guid>
+public class CreateReservationCommandHandler(IReservationRepository reservationRepository)
+    : IRequestHandler<CreateReservationCommand, Guid>
 {
     public async Task<Guid> Handle(CreateReservationCommand request, CancellationToken cancellationToken)
     {
-        var table = await availabilityService.FindAvailableTableAsync(
-            request.ReservationAtUtc, request.PartySize, cancellationToken)
-            ?? throw new InvalidOperationException("No hay mesas disponibles para ese horario y tamaño de grupo.");
-
-        var reservation = Reservation.Create(
+        var reservation = await reservationRepository.CreateAsync(
             request.CustomerName,
             request.Phone,
             request.Email,
             request.PartySize,
             request.ReservationAtUtc,
-            table.Number,
-            request.Notes);
+            request.Notes,
+            cancellationToken);
 
-        await reservationRepository.AddAsync(reservation, cancellationToken);
         return reservation.Id;
     }
 }

@@ -28,3 +28,26 @@ export function formatShortDate(isoString: string): string {
     timeZone: "UTC",
   });
 }
+
+function toIsoDate(d: Date): string {
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
+/**
+ * Fecha de calendario "de hoy" según la hora LOCAL del navegador (no `toISOString()`, que usa UTC:
+ * como León/CDMX es UTC-6, entre las 18:00 y la medianoche locales `toISOString()` ya reporta el día
+ * siguiente, rompiendo los selectores de fecha justo en horas pico de cena).
+ */
+export function todayIso(): string {
+  return toIsoDate(new Date());
+}
+
+/** Igual que {@link todayIso} pero desplazada `days` días hacia adelante. */
+export function addDaysIso(days: number): string {
+  const d = new Date();
+  d.setDate(d.getDate() + days);
+  return toIsoDate(d);
+}

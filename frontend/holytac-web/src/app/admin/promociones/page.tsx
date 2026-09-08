@@ -2,16 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { menuApi, promotionsApi, type DiscountType, type MenuItemDto, type PromotionDto } from "@/lib/api";
-
-function todayIso(): string {
-  return new Date().toISOString().slice(0, 10);
-}
-
-function inNDays(n: number): string {
-  const d = new Date();
-  d.setDate(d.getDate() + n);
-  return d.toISOString().slice(0, 10);
-}
+import { addDaysIso, todayIso } from "@/lib/datetime";
 
 export default function AdminPromocionesPage() {
   const [promotions, setPromotions] = useState<PromotionDto[]>([]);
@@ -27,7 +18,7 @@ export default function AdminPromocionesPage() {
   const [comboPrice, setComboPrice] = useState("149");
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
   const [startsAt, setStartsAt] = useState(todayIso());
-  const [endsAt, setEndsAt] = useState(inNDays(30));
+  const [endsAt, setEndsAt] = useState(addDaysIso(30));
   const [isFeatured, setIsFeatured] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
